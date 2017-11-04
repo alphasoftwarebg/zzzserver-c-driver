@@ -8,9 +8,9 @@ C driver for **ZZZ Base** through ZZZ Server
 **sample usage:**
 ~~~~~~~~
 zzzclient_zzzprogram(
-  "localhost",                            // **ZZZ Server** host
-  3333,                                   // **ZZZ Server** port
-  "#[cout;Hello World from ZZZServer!]",  // **ZZZ Base** sample program
+  "localhost",                            // ZZZ Server host
+  3333,                                   // ZZZ Server port
+  "#[cout;Hello World from ZZZServer!]",  // ZZZ Base sample program
   result);                                // result buffer of type char*
 ~~~~~~~~
 
