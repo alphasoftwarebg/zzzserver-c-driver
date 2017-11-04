@@ -5,7 +5,7 @@ C driver for **ZZZ Base** through ZZZ Server
 *zzzclient.c* - the file with driver functions implementations
 *main.c* - sample access to **ZZZ Base** through function "zzzclient_zzzprogram"
 
-{title="**sample usage**:",linenos=off,lang="c"}
+**sample usage:**
 ~~~~~~~~
 zzzclient_zzzprogram(
   "localhost",                            // **ZZZ Server** host
