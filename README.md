@@ -6,12 +6,12 @@ C driver for **ZZZ Base** through ZZZ Server
 ***main.c*** - sample access to **ZZZ Base** through function "zzzclient_zzzprogram"  
 
 **sample usage:**
-~~~~~~~~
+```c
 zzzclient_zzzprogram(
   "localhost",                            // ZZZ Server host
   3333,                                   // ZZZ Server port
   "#[cout;Hello World from ZZZServer!]",  // ZZZ Base sample program
   result);                                // result buffer of type char*
-~~~~~~~~
+```
 
 Returned result encoded in the utf-8
