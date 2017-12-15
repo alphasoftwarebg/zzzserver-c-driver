@@ -44,7 +44,7 @@ void zzzclient_uninit_socket()
 
 void zzzclient_init(int* sock)
 {
-    *sock = -1;
+	*sock = -1;
 
 	zzzclient_init_socket();
 }
@@ -57,112 +57,110 @@ void zzzclient_destroy(int* sock)
 }
 
 /**
-    Connect to a host on a certain port number
-*/
+ * Connect to a host on a certain port number
+ */
 BOOL zzzclient_connect(int* sock, char* address , int port)
 {
-    struct sockaddr_in server;
+	struct sockaddr_in server;
 
-    // create socket if it is not already created
-    if(*sock == -1)
-    {
-        //Create socket
-        *sock = (int)socket(AF_INET , SOCK_STREAM , 0);
-        if (*sock == -1)
-        {
-            // Could not create socket
-        }
+	// create socket if it is not already created
+	if(*sock == -1)
+	{
+		//Create socket
+		*sock = (int)socket(AF_INET , SOCK_STREAM , 0);
+		if (*sock == -1)
+		{
+			// Could not create socket
+		}
+		// Socket created
+	}
+	else { /* OK , nothing */ }
 
-        // Socket created
-    }
-    else    {   /* OK , nothing */  }
+	// setup address structure
+	if((int)inet_addr(address) == -1)
+	{
+		struct hostent *he;
+		struct in_addr **addr_list;
 
-    // setup address structure
-    if((int)inet_addr(address) == -1)
-    {
-        struct hostent *he;
-        struct in_addr **addr_list;
+		// resolve the hostname, its not an ip address
+		if((he = gethostbyname(address)) == NULL)
+		{
+			// Failed to resolve hostname
 
-        // resolve the hostname, its not an ip address
-        if((he = gethostbyname(address)) == NULL)
-        {
-            // Failed to resolve hostname
+			return FALSE;
+		}
 
-            return FALSE;
-        }
+		// Cast the h_addr_list to in_addr , since h_addr_list also has the ip address in long format only
+		addr_list = (struct in_addr **) he->h_addr_list;
 
-        // Cast the h_addr_list to in_addr , since h_addr_list also has the ip address in long format only
-        addr_list = (struct in_addr **) he->h_addr_list;
+		server.sin_addr = *addr_list[0];
+	}
+	else // plain ip address
+	{
+		server.sin_addr.s_addr = inet_addr(address);
+	}
 
-        server.sin_addr = *addr_list[0];
-    }
-    // plain ip address
-    else
-    {
-        server.sin_addr.s_addr = inet_addr(address);
-    }
+	server.sin_family = AF_INET;
+	server.sin_port = htons( port );
 
-    server.sin_family = AF_INET;
-    server.sin_port = htons( port );
-
-    // Connect to remote server
-    if (connect(*sock , (struct sockaddr *)&server , sizeof(server)) < 0)
-    {
-        // Error: Connect failed.
-        return 1;
-    }
+	// Connect to remote server
+	if (connect(*sock , (struct sockaddr *)&server , sizeof(server)) < 0)
+	{
+		// Error: Connect failed.
+		return 1;
+	}
 
 #ifndef _WIN32
-    {
+	{
 		int sockFlags;
 		sockFlags = fcntl(sock, F_GETFL, 0);
 		sockFlags |= O_NONBLOCK;
 		fcntl(sock, F_SETFL, sockFlags);
-    }
+	}
 #endif
 
-    // Connected
-    return TRUE;
+	// Connected
+	return TRUE;
 }
 
 /**
-    Send data to the connected host
-*/
+ * Send data to the connected host
+ */
 BOOL zzzclient_send(int* sock, char* data)
 {
-    // Send some data
-    if(send(*sock, data, (int)strlen(data)+1, 0) < 0)
-    {
-        // Send failed
-        return FALSE;
-    }
-    // Data "data" send;
+	// Send some data
+	if(send(*sock, data, (int)strlen(data)+1, 0) < 0)
+	{
+		// Send failed
+		return FALSE;
+	}
+	// Data "data" send;
 
-    return TRUE;
+	return TRUE;
 }
 
 /**
-    Receive data from the connected host
-*/
+ * Receive data from the connected host
+ */
 char* zzzclient_receive(int* sock, char* result)
 {
 	char buffer[512];
 	int len = 0;
 	int all=0;
-    result[0] = '\0';
+	result[0] = '\0';
 
 	if(result == NULL)
 		return result;
 
-    // Receive a reply from the server
-    while((len = (int)recv(*sock , buffer , sizeof(buffer) , 0)) > 0)
-    {
+	// Receive a reply from the server
+	while((len = (int)recv(*sock , buffer , sizeof(buffer) , 0)) > 0)
+	{
 		buffer[len] = '\0';
 		memcpy(&result[all], buffer, len);
-	    all += len;
-    }
+		all += len;
+	}
 
-    return result;
+	return result;
 }
 
 void zzzclient_close(int* sock)
